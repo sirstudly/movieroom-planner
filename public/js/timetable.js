@@ -516,11 +516,11 @@ jQuery(document).ready(function () {
         ;
         var _0x716bx67 = jQuery(this);
         jQuery.ajax({
-            url: 'timetables.php',
+            url: 'http://192.168.16.4:8000/movieroom/api/events',
             dataType: 'json',
             data: '{mode:mode}',
             beforeSend: function () {
-                _0x716bx67.html('<div class="loading"><img src="assets/images/loading.gif" /></div>')
+                _0x716bx67.html('<div class="loading"><img src="images/loading.gif" /></div>')
             },
             success: function (_0x716bx68) {
                 tiva_timetables = [];
