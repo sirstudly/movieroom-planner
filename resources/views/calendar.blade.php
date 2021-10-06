@@ -28,6 +28,10 @@
     <link rel="stylesheet" href="{{URL::asset('/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{URL::asset('/css/font-awesome.min.css')}}">
     <link rel="stylesheet" href="{{URL::asset('/css/style.css')}}">
+
+    <script type="application/javascript">
+        jQuery(document).ready(function() { load_timetables('{{ env('APP_API_GET_EVENTS_URL') }}', '{mode:mode}'); });
+    </script>
 </head>
 <body>
 <div class="container">
@@ -113,7 +117,7 @@
                 <h2>Monthly View</h2>
                 <p>Display all your timetables via month.</p>
                 <div class="timetable-example">
-                    <div class="tiva-timetable" data-start="monday"></div>
+                    <div id="tt-month" class="tiva-timetable" data-view="month" data-mode="day" data-start="monday"></div>
                 </div>
             </div>
 
@@ -122,7 +126,7 @@
                 <p>Display all your timetables via week. You can use as day schedule (repeat on every week) or as
                     specific date (like monthly view).</p>
                 <div class="timetable-example">
-                    <div class="tiva-timetable" data-view="week" data-start="monday"></div>
+                    <div id="tt-week" class="tiva-timetable" data-view="week" data-start="monday"></div>
                 </div>
             </div>
 
@@ -131,7 +135,7 @@
                 <p>Display all your timetables on list. You can use as day schedule (repeat on every week) or as
                     specific date (like monthly view).</p>
                 <div class="timetable-example">
-                    <div class="tiva-timetable" data-view="list" data-mode="day" data-start="monday"></div>
+                    <div id="tt-list" class="tiva-timetable" data-view="list" data-start="monday"></div>
                 </div>
             </div>
         </div>
