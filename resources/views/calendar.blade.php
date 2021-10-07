@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="{{URL::asset('/css/style.css')}}">
 
     <script type="application/javascript">
-        jQuery(document).ready(function() { load_timetables('{{ env('APP_API_GET_EVENTS_URL') }}', '{mode:mode}'); });
+        jQuery(document).ready(function() { load_timetables('{{ env('APP_API_GET_EVENTS_URL') }}'); });
     </script>
 </head>
 <body>
@@ -48,7 +48,7 @@
                     easy to use yet gives plenty of features and styling options. You can use it for any kind of
                     schedule or events calendar.
                 <div class="timetable-example">
-                    <div class="tiva-timetable" data-view="week" data-mode="day" data-start="monday"></div>
+                    <div class="tiva-timetable" data-view="week" data-mode="day" data-start="monday" data-header-time="hide"></div>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@
                 <p>Tiva Timetable has many good features for your demand</p>
                 <div class="features-list">
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="padding:0">
-                        <img class="img-responsive" src="images/temp/tiva_timetable.png" alt="Tiva Timetable Features"/>
+                        <img class="img-responsive" src="images/demo/tiva_timetable.png" alt="Tiva Timetable Features"/>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                         <div class="features-item">

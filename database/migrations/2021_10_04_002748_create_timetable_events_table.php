@@ -16,9 +16,11 @@ class CreateTimetableEventsTable extends Migration
         Schema::create('timetable_events', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
+            $table->string('image_url');
             $table->text('description');
             $table->date('start_date');
             $table->time('start_time');
+            $table->string('event_type');
             $table->smallInteger('duration_minutes');
             $table->timestamps();
         });

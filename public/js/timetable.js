@@ -1,11 +1,12 @@
-var wordMonth = new Array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
-var wordDay_sun = 'Sunday';
-var wordDay_mon = 'Monday';
-var wordDay_tue = 'Tuesday';
-var wordDay_wed = 'Wednesday';
-var wordDay_thu = 'Thursday';
-var wordDay_fri = 'Friday';
-var wordDay_sat = 'Saturday';
+const wordMonth = new Array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+const wordDay_sun = 'Sunday';
+const wordDay_mon = 'Monday';
+const wordDay_tue = 'Tuesday';
+const wordDay_wed = 'Wednesday';
+const wordDay_thu = 'Thursday';
+const wordDay_fri = 'Friday';
+const wordDay_sat = 'Saturday';
+const DAYS_OF_WEEK = new Array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
 var tiva_timetables = [];
 var tiva_current_date = new Date();
 var tiva_current_month = tiva_current_date.getMonth() + 1;
@@ -110,8 +111,11 @@ function getDayAfter(this_date, num_days) {
     return new Date(now.setTime(this_date.getTime() + (num_days * 24 * 60 * 60 * 1000)))
 }
 
-function naviClick(_0x716bx28, _0x716bx29, _0x716bx2a, _0x716bx2b, _0x716bx2c) {
-    createTimetable(jQuery('#' + _0x716bx28), _0x716bx29, _0x716bx2a, _0x716bx2b, _0x716bx2c)
+// first_date_of_week : Date object (first date of week to display; should lie on a Sunday/Monday)
+// date_adj : one of 'prevyr', 'nextyr', 'prevmo', 'nextmo', 'prevwe', 'nextwe', 'current'
+// current_month is 1 indexed (1 = January, 2 = February...)
+function naviClick(timetable_elem, date_adj, first_date_of_week, current_month, current_year) {
+    createTimetable(jQuery('#' + timetable_elem), date_adj, first_date_of_week, current_month, current_year)
 }
 
 function getTimetables(tiva_timetables, this_date, this_month, this_year) {
@@ -261,8 +265,8 @@ function timetableWeek(timetable_elem, tiva_timetables, for_date) {
         for (var j = 0; j < timetables_to_show.length; j++) {
             if (timetables_to_show[j].start_time && timetables_to_show[j].end_time) {
                 var timetable_img_html = '';
-                if (timetables_to_show[j].image) {
-                    timetable_img_html = '<div class="timetable-image"><img src="admin/timetable/images/' + timetables_to_show[j].image + '" alt="' + timetables_to_show[j].name + '" /></div>';
+                if (timetables_to_show[j].image_url) {
+                    timetable_img_html = '<div class="timetable-image"><img src="' + timetables_to_show[j].image_url + '" alt="' + timetables_to_show[j].title + '" /></div>';
                 }
                 var timetable_end_time_text = '';
                 if (timetables_to_show[j].end_time) {
@@ -272,7 +276,7 @@ function timetableWeek(timetable_elem, tiva_timetables, for_date) {
                 var timetable_height = getHeight(timetables_to_show[j].start_time, timetables_to_show[j].end_time);
                 var width_css = (checkMulti(timetables_to_show[j], timetables_to_show) > 1) ? 'width:' + (100 / checkMulti(timetables_to_show[j], timetables_to_show)) + '%;' : '';
                 var left_offset_css = (checkOrder(timetables_to_show[j], timetables_to_show) > 0) ? 'left:' + (checkOrder(timetables_to_show[j], timetables_to_show) * (100 / checkMulti(timetables_to_show[j], timetables_to_show))) + '%' : '';
-                timetable_html += '<div class="timetable-item">' + '<a class="timetable-title color-' + timetables_to_show[j].color + '" style="top:' + top_offset + 'px; height:' + timetable_height + 'px; ' + width_css + left_offset_css + '" href="#timetable-popup-' + timetables_to_show[j].id + '" class="open-popup-link">' + '<div class="timetable-title-wrap">' + '<div class="timetable-name">' + timetables_to_show[j].name + '</div>' + '<div class="timetable-time">' + timetables_to_show[j].start_time + ' - ' + timetables_to_show[j].end_time + '</div>' + '</div>' + '</a>' + '<div id="timetable-popup-' + timetables_to_show[j].id + '" class="timetable-popup zoom-anim-dialog mfp-hide">' + '<div class="popup-header color-' + timetables_to_show[j].color + '">' + timetables_to_show[j].name + '</div>' + '<div class="popup-body">' + timetable_img_html + '<div class="timetable-time color-' + timetables_to_show[j].color + '">' + timetables_to_show[j].start_time + timetable_end_time_text + '</div>' + '<div class="timetable-desc">' + timetables_to_show[j].description + '</div>' + '</div>' + '</div>' + '</div>';
+                timetable_html += '<div class="timetable-item">' + '<a class="timetable-title color-' + timetables_to_show[j].event_type + '" style="top:' + top_offset + 'px; height:' + timetable_height + 'px; ' + width_css + left_offset_css + '" href="#timetable-popup-' + timetables_to_show[j].id + '" class="open-popup-link">' + '<div class="timetable-title-wrap">' + '<div class="timetable-name">' + timetables_to_show[j].title + '</div>' + '<div class="timetable-time">' + timetables_to_show[j].start_time + ' - ' + timetables_to_show[j].end_time + '</div>' + '</div>' + '</a>' + '<div id="timetable-popup-' + timetables_to_show[j].id + '" class="timetable-popup zoom-anim-dialog mfp-hide">' + '<div class="popup-header color-' + timetables_to_show[j].event_type + '">' + timetables_to_show[j].title + '</div>' + '<div class="popup-body">' + timetable_img_html + '<div class="timetable-time color-' + timetables_to_show[j].event_type + '">' + timetables_to_show[j].start_time + timetable_end_time_text + '</div>' + '<div class="timetable-desc">' + timetables_to_show[j].description + '</div>' + '</div>' + '</div>' + '</div>';
             }
         }
         timetable_html += '</div>';
@@ -347,9 +351,9 @@ function timetableList(timetable_elem, tiva_timetables, first_date_of_week) {
             timetable_html += '<div class="timetable-content">';
             for (var j = 0; j < timetables_to_show.length; j++) {
                 if (timetables_to_show[j].start_time && timetables_to_show[j].end_time) {
-                    var image_html = timetables_to_show[j].image ? '<div class="timetable-image"><img src="admin/timetable/images/' + timetables_to_show[j].image + '" alt="' + timetables_to_show[j].name + '" /></div>' : '';
+                    var image_html = timetables_to_show[j].image_url ? '<div class="timetable-image"><img src="' + timetables_to_show[j].image_url + '" alt="' + timetables_to_show[j].title + '" /></div>' : '';
                     var end_time_html = timetables_to_show[j].end_time ? ' - ' + timetables_to_show[j].end_time : '';
-                    timetable_html += '<div class="timetable-item">' + '<span class="timetable-color color-' + timetables_to_show[j].color + '"></span>' + '<a class="timetable-title" href="#timetable-popup-' + timetables_to_show[j].id + '" class="open-popup-link">' + '<span class="timetable-time">' + timetables_to_show[j].start_time + end_time_html + '</span>' + '<span class="timetable-name">' + timetables_to_show[j].name + '</span>' + '</a>' + '<div id="timetable-popup-' + timetables_to_show[j].id + '" class="timetable-popup zoom-anim-dialog mfp-hide">' + '<div class="popup-header color-' + timetables_to_show[j].color + '">' + timetables_to_show[j].name + '</div>' + '<div class="popup-body">' + image_html + '<div class="timetable-time color-' + timetables_to_show[j].color + '">' + timetables_to_show[j].start_time + end_time_html + '</div>' + '<div class="timetable-desc">' + timetables_to_show[j].description + '</div>' + '</div>' + '</div>' + '</div>';
+                    timetable_html += '<div class="timetable-item">' + '<span class="timetable-color color-' + timetables_to_show[j].event_type + '"></span>' + '<a class="timetable-title" href="#timetable-popup-' + timetables_to_show[j].id + '" class="open-popup-link">' + '<span class="timetable-time">' + timetables_to_show[j].start_time + end_time_html + '</span>' + '<span class="timetable-name">' + timetables_to_show[j].title + '</span>' + '</a>' + '<div id="timetable-popup-' + timetables_to_show[j].id + '" class="timetable-popup zoom-anim-dialog mfp-hide">' + '<div class="popup-header color-' + timetables_to_show[j].event_type + '">' + timetables_to_show[j].title + '</div>' + '<div class="popup-body">' + image_html + '<div class="timetable-time color-' + timetables_to_show[j].event_type + '">' + timetables_to_show[j].start_time + end_time_html + '</div>' + '<div class="timetable-desc">' + timetables_to_show[j].description + '</div>' + '</div>' + '</div>' + '</div>';
                 }
             }
             timetable_html += '</div></div>';
@@ -407,9 +411,9 @@ function timetableMonth(timetable_elem, tiva_timetables, start_month_day, last_d
                 }
                 var timetables_to_show = getTimetables(tiva_timetables, day_counter, current_month - 1, current_year);
                 for (var k = 0; k < timetables_to_show.length; k++) {
-                    var img_html = timetables_to_show[k].image ? '<div class="timetable-image"><img src="admin/timetable/images/' + timetables_to_show[k].image + '" alt="' + timetables_to_show[k].name + '" /></div>' : '';
+                    var img_html = timetables_to_show[k].image_url ? '<div class="timetable-image"><img src="' + timetables_to_show[k].image_url + '" alt="' + timetables_to_show[k].title + '" /></div>' : '';
                     var end_time_html = timetables_to_show[k].end_time ? ' - ' + timetables_to_show[k].end_time : '';
-                    timetable_html += '<div class="timetable-item">' + '<span class="timetable-color color-' + timetables_to_show[k].color + '"></span>' + '<a class="timetable-title" href="#timetable-popup-' + timetables_to_show[k].id + '" class="open-popup-link">' + '<span class="timetable-time">' + timetables_to_show[k].start_time + '</span>' + '<span class="timetable-name">' + timetables_to_show[k].name + '</span>' + '</a>' + '<div id="timetable-popup-' + timetables_to_show[k].id + '" class="timetable-popup zoom-anim-dialog mfp-hide">' + '<div class="popup-header color-' + timetables_to_show[k].color + '">' + timetables_to_show[k].name + '</div>' + '<div class="popup-body">' + img_html + '<div class="timetable-time color-' + timetables_to_show[k].color + '">' + timetables_to_show[k].start_time + end_time_html + '</div>' + '<div class="timetable-desc">' + timetables_to_show[k].description + '</div>' + '</div>' + '</div>' + '</div>';
+                    timetable_html += '<div class="timetable-item">' + '<span class="timetable-color color-' + timetables_to_show[k].event_type + '"></span>' + '<a class="timetable-title" href="#timetable-popup-' + timetables_to_show[k].id + '" class="open-popup-link">' + '<span class="timetable-time">' + timetables_to_show[k].start_time + '</span>' + '<span class="timetable-name">' + timetables_to_show[k].title + '</span>' + '</a>' + '<div id="timetable-popup-' + timetables_to_show[k].id + '" class="timetable-popup zoom-anim-dialog mfp-hide">' + '<div class="popup-header color-' + timetables_to_show[k].event_type + '">' + timetables_to_show[k].title + '</div>' + '<div class="popup-body">' + img_html + '<div class="timetable-time color-' + timetables_to_show[k].event_type + '">' + timetables_to_show[k].start_time + end_time_html + '</div>' + '<div class="timetable-desc">' + timetables_to_show[k].description + '</div>' + '</div>' + '</div>' + '</div>';
                 }
                 timetable_html += '</td>';
             }
@@ -425,24 +429,22 @@ function timetableMonth(timetable_elem, tiva_timetables, start_month_day, last_d
     });
 }
 
-function load_timetables(url, data) {
+function load_timetables(url) {
     jQuery('.tiva-timetable').each(function (idx) {
     // jQuery('#tt-month').each(function (idx) {
         jQuery(this).attr('id', 'timetable-' + (idx + 1));
 
-        // FIXME: what is the intention of this variable which is never used???
+        // data_mode can be 'day' where we only show the current week; the response from the server
+        // should only contain the field { day: monday } and no specific dates
+        // data_mode = 'date' is the normal view where you can go forward/back by a week
         var data_view = (typeof jQuery(this).attr('data-view') != 'undefined') ? jQuery(this).attr('data-view') : 'month';
-        if ((jQuery(this).attr('data-mode') == 'day') && (data_view == 'week' || data_view == 'list')) {
-            var _0x716bx66 = 'day';
-        } else {
-            var _0x716bx66 = 'date';
-        }
+        var data_mode = (jQuery(this).attr('data-mode') == 'day') && (data_view == 'week' || data_view == 'list') ? 'day' : 'date';
 
         var timetable_elem = jQuery(this);
         jQuery.ajax({
             url: url,
             dataType: 'json',
-            data: data,
+            data: JSON.stringify({mode: data_mode}),
             beforeSend: function () {
                 timetable_elem.html('<div class="loading"><img src="images/loading.gif" /></div>')
             },
@@ -454,6 +456,11 @@ function load_timetables(url, data) {
                 tiva_timetables.sort(sortByTime);
                 for (var i = 0; i < tiva_timetables.length; i++) {
                     tiva_timetables[i].id = i;
+                    const event_date = tiva_timetables[i].start_date.split('-');
+                    tiva_timetables[i].date = event_date[2];
+                    tiva_timetables[i].month = parseInt(event_date[1]) - 1;
+                    tiva_timetables[i].year = event_date[0];
+                    tiva_timetables[i].day = DAYS_OF_WEEK[new Date(tiva_timetables[i].start_date).getDay()];
                 }
                 var now = new Date();
                 var day_start = (typeof timetable_elem.attr('data-start') != 'undefined') ? timetable_elem.attr('data-start') : 'sunday';

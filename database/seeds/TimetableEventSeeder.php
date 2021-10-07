@@ -5,6 +5,19 @@ use App\TimetableEvent;
 
 class TimetableEventSeeder extends Seeder
 {
+    private function createEvent($title, $img_url, $start_date, $start_time, $duration_min, $event_type, $description)
+    {
+        TimetableEvent::create([
+            "title" => $title,
+            "image_url" => $img_url,
+            "start_date" => $start_date->format('Y-m-d'),
+            "start_time" => "$start_time",
+            "duration_minutes" => $duration_min,
+            "event_type" => $event_type,
+            "description" => $description
+        ]);
+    }
+
     /**
      * Run the database seeds.
      *
@@ -18,14 +31,71 @@ class TimetableEventSeeder extends Seeder
         $faker = \Faker\Factory::create();
 
         // And now, let's create a few items in our database:
-        for ($i = 0; $i < 20; $i++) {
-            TimetableEvent::create([
-                'title' => $faker->sentence(3),
-                'description' => $faker->paragraph,
-                'start_date' => $faker->dateTimeBetween('-1 week', '+1 week'),
-                'start_time' => $faker->numberBetween(0, 23) . ':' . $faker->randomElement(['00', '30']),
-                'duration_minutes' => $faker->randomElement([60, 90, 120, 150, 180])
-            ]);
-        }
+        $date_cur = new DateTime("first sunday of this month");
+        $this->createEvent("Roger Hodgson", "images/demo/roger_hodgson.jpg",
+            $date_cur, "09:30", 90, "4", $faker->paragraph);
+        $this->createEvent("Musiq SoulChild - Grown & Sexy 16", "images/demo/musiq_soulchild.jpg",
+            $date_cur, "15:00", 150, "1", 'Grown & Sexy 16<br />\r\nMusiq SoulChild and Avant<br />\r\n<br />\r\nTickets:<br />\r\n$55.00 - Row 1-5<br />\r\n$45.00 - Row 6-13<br />\r\n$35.00 - Row 14-20<br />\r\n$20.00 - Row 21-25');
+
+        $date_cur->add(new DateInterval("P1D"));
+
+        $events[] = $this->createEvent("Festival of Praise Tour", "images/demo/festival_of_praise_tour.jpg",
+            $date_cur, "13:30", 150, "2", "HEZEKIAH WALKER , ISRAEL HOUGHTON, REGINA BELLE, FRED HAMMOND, CASEY J, KAREN - CLARKE - SHEARD, COMEDIAN EARTHQUAKE<br />\r\n<br />\r\nTickets:<br />\r\n$52.50 Row 1-5<br />\r\n$47.50 Row 6-13<br />\r\n$37.50 Row 14-20<br />\r\n$27.50 Row 21-25");
+
+        $date_cur->add(new DateInterval("P2D"));
+
+        $events[] = $this->createEvent("Musiq SoulChild - Grown & Sexy 16", "images/demo/musiq_soulchild.jpg",
+            $date_cur, "10:00", 90, "1", "Grown & Sexy 16<br />\r\nMusiq SoulChild and Avant<br />\r\n<br />\r\nTickets:<br />\r\n$55.00 - Row 1-5<br />\r\n$45.00 - Row 6-13<br />\r\n$35.00 - Row 14-20<br />\r\n$20.00 - Row 21-25");
+        $events[] = $this->createEvent("Lucha Libre", "images/demo/lucha_libre.jpg",
+            $date_cur, "15:00", 180, "4", $faker->paragraph);
+
+        $date_cur->add(new DateInterval("P3D"));
+
+        $this->createEvent("Roger Hodgson", "images/demo/roger_hodgson.jpg",
+            $date_cur, "15:00", 180, "3", $faker->paragraph);
+
+        $date_cur->add(new DateInterval("P3D"));
+
+        $this->createEvent("Roger Hodgson", "images/demo/roger_hodgson.jpg",
+            $date_cur, "11:00", 60, "4", $faker->paragraph);
+        $events[] = $this->createEvent("Musiq SoulChild - Grown & Sexy 16", "images/demo/musiq_soulchild.jpg",
+            $date_cur, "13:00", 150, "1", "Grown & Sexy 16<br />\r\nMusiq SoulChild and Avant<br />\r\n<br />\r\nTickets:<br />\r\n$55.00 - Row 1-5<br />\r\n$45.00 - Row 6-13<br />\r\n$35.00 - Row 14-20<br />\r\n$20.00 - Row 21-25");
+
+        $date_cur->add(new DateInterval("P1D"));
+
+        $events[] = $this->createEvent("Lucha Libre", "images/demo/lucha_libre.jpg",
+            $date_cur, "12:30", 90, "2", $faker->paragraph);
+
+        $date_cur->add(new DateInterval("P3D"));
+
+        $events[] = $this->createEvent("Festival of Praise Tour", "images/demo/festival_of_praise_tour.jpg",
+            $date_cur, "16:00", 180, "3", "HEZEKIAH WALKER , ISRAEL HOUGHTON, REGINA BELLE, FRED HAMMOND, CASEY J, KAREN - CLARKE - SHEARD, COMEDIAN EARTHQUAKE<br />\r\n<br />\r\nTickets:<br />\r\n$52.50 Row 1-5<br />\r\n$47.50 Row 6-13<br />\r\n$37.50 Row 14-20<br />\r\n$27.50 Row 21-25");
+
+        $date_cur->add(new DateInterval("P3D"));
+
+        $events[] = $this->createEvent("Lucha Libre", "images/demo/lucha_libre.jpg",
+            $date_cur, "10:20", 70, "1", $faker->paragraph);
+
+        $date_cur->add(new DateInterval("P2D"));
+
+        $this->createEvent("Roger Hodgson", "images/demo/roger_hodgson.jpg",
+            $date_cur, "15:00", 150, "4", $faker->paragraph);
+        $events[] = $this->createEvent("Lucha Libre", "images/demo/lucha_libre.jpg",
+            $date_cur, "11:30", 90, "3", $faker->paragraph);
+
+        $date_cur->add(new DateInterval("P2D"));
+
+        $events[] = $this->createEvent("Festival of Praise Tour", "images/demo/festival_of_praise_tour.jpg",
+            $date_cur, "14:30", 120, "2", "HEZEKIAH WALKER , ISRAEL HOUGHTON, REGINA BELLE, FRED HAMMOND, CASEY J, KAREN - CLARKE - SHEARD, COMEDIAN EARTHQUAKE<br />\r\n<br />\r\nTickets:<br />\r\n$52.50 Row 1-5<br />\r\n$47.50 Row 6-13<br />\r\n$37.50 Row 14-20<br />\r\n$27.50 Row 21-25");
+
+        $date_cur->add(new DateInterval("P2D"));
+
+        $events[] = $this->createEvent("Lucha Libre", "images/demo/lucha_libre.jpg",
+            $date_cur, "10:30", 120, "3", $faker->paragraph);
+
+        $date_cur->add(new DateInterval("P2D"));
+
+        $this->createEvent("Roger Hodgson", "images/demo/roger_hodgson.jpg",
+            $date_cur, "18:00", 60, "1", $faker->paragraph);
     }
 }
