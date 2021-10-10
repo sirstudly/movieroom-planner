@@ -13,10 +13,10 @@ var tiva_current_month = tiva_current_date.getMonth() + 1;
 var tiva_current_year = tiva_current_date.getFullYear();
 
 function sortByTime(a, b) {
-    if (a.start_time < b.start_time) {
+    if (a.axis_start_time < b.axis_start_time) {
         return -1
     } else {
-        if (a.start_time > b.start_time) {
+        if (a.axis_start_time > b.axis_start_time) {
             return 1
         } else {
             return 0
@@ -25,10 +25,10 @@ function sortByTime(a, b) {
 }
 
 function sortByEndTime(a, b) {
-    if (a.end_time < b.end_time) {
+    if (a.axis_end_time < b.axis_end_time) {
         return -1
     } else {
-        if (a.end_time > b.end_time) {
+        if (a.axis_end_time > b.axis_end_time) {
             return 1
         } else {
             return 0
@@ -36,10 +36,24 @@ function sortByEndTime(a, b) {
     }
 }
 
+// sort by end time but if continues_to_next_day = true then this is sorted at the end
+/*
+function sortByEndTimeDaySpan(a, b) {
+    if (a.continues_to_next_day && b.continues_to_next_day) {
+        return sortByEndTime(a, b);
+    } else if (a.continues_to_next_day) {
+        return 1;
+    } else if (b.continues_to_next_day) {
+        return -1;
+    }
+    return sortByEndTime(a, b);
+}
+*/
+
 function getMinTime(entries) {
     for (var i = 0; i < entries.length; i++) {
-        if (entries[i].start_time) {
-            return parseInt(entries[i].start_time, 10)
+        if (entries[i].axis_start_time) {
+            return parseInt(entries[i].axis_start_time, 10)
         }
     }
 }
@@ -47,8 +61,8 @@ function getMinTime(entries) {
 function getMaxTime(entries) {
     entries.sort(sortByEndTime);
     for (var i = entries.length - 1; i >= 0; i--) {
-        if (entries[i].end_time) {
-            var timeArr = entries[i].end_time.split(':');
+        if (entries[i].axis_end_time) {
+            var timeArr = entries[i].axis_end_time.split(':');
             if (timeArr[1] == '00') {
                 return timeArr[0]
             } else {
@@ -75,10 +89,10 @@ function checkMulti(entry, entries) {
     var result = 1;
     for (var i = 0; i < entries.length; i++) {
         if (entry.id != entries[i].id) {
-            if (((calHour(entry.start_time) >= calHour(entries[i].start_time))
-                    && (calHour(entry.start_time) < calHour(entries[i].end_time)))
-                || ((calHour(entries[i].start_time) >= calHour(entry.start_time))
-                    && (calHour(entries[i].start_time) < calHour(entry.end_time)))) {
+            if (((calHour(entry.axis_start_time) >= calHour(entries[i].axis_start_time))
+                    && (calHour(entry.axis_start_time) < calHour(entries[i].axis_end_time)))
+                || ((calHour(entries[i].axis_start_time) >= calHour(entry.axis_start_time))
+                    && (calHour(entries[i].axis_start_time) < calHour(entry.axis_end_time)))) {
                 result++;
             }
         }
@@ -90,10 +104,10 @@ function checkOrder(entry, entries) {
     var result = 0;
     for (var i = 0; i < entries.length; i++) {
         if (entry.id > entries[i].id) {
-            if (((calHour(entry.start_time) >= calHour(entries[i].start_time))
-                    && (calHour(entry.start_time) < calHour(entries[i].end_time)))
-                || ((calHour(entries[i].start_time) >= calHour(entry.start_time))
-                    && (calHour(entries[i].start_time) < calHour(entry.end_time)))) {
+            if (((calHour(entry.axis_start_time) >= calHour(entries[i].axis_start_time))
+                    && (calHour(entry.axis_start_time) < calHour(entries[i].axis_end_time)))
+                || ((calHour(entries[i].axis_start_time) >= calHour(entry.axis_start_time))
+                    && (calHour(entries[i].axis_start_time) < calHour(entry.axis_end_time)))) {
                 result++;
             }
         }
@@ -236,8 +250,14 @@ function timetableWeek(timetable_elem, tiva_timetables, for_date) {
         tiva_timetables = getTimetablesWeek(tiva_timetables, new Date(from_date_year, from_date_month - 1, from_date_date), new Date(from_date_plus_1_week_year, from_date_plus_1_week_month - 1, from_date_plus_1_week_date));
     }
 
-    var min_hour = getMinTime(tiva_timetables) ? getMinTime(tiva_timetables) : 8;
-    var max_hour = getMaxTime(tiva_timetables) ? getMaxTime(tiva_timetables) : 15;
+    var min_hour = getMinTime(tiva_timetables);
+    if (!min_hour && min_hour != 0) {
+        min_hour = 8;
+    }
+    var max_hour = getMaxTime(tiva_timetables);
+    if (!max_hour) {
+        max_hour = 15;
+    }
     timetable_html += '<div class="timetable-week ' + ((timetable_elem.attr('data-header-time') == 'hide') ? '' : 'show-time') + '">';
     timetable_html += '<div class="timetable-axis">';
     for (var i = min_hour; i <= max_hour; i++) {
@@ -263,7 +283,7 @@ function timetableWeek(timetable_elem, tiva_timetables, for_date) {
             timetables_to_show = getTimetables(tiva_timetables, day_after_from_date_date, day_after_from_date_month - 1, day_after_from_date_year);
         }
         for (var j = 0; j < timetables_to_show.length; j++) {
-            if (timetables_to_show[j].start_time && timetables_to_show[j].end_time) {
+            if (timetables_to_show[j].axis_start_time && timetables_to_show[j].axis_end_time) {
                 var timetable_img_html = '';
                 if (timetables_to_show[j].image_url) {
                     timetable_img_html = '<div class="timetable-image"><img src="' + timetables_to_show[j].image_url + '" alt="' + timetables_to_show[j].title + '" /></div>';
@@ -272,8 +292,8 @@ function timetableWeek(timetable_elem, tiva_timetables, for_date) {
                 if (timetables_to_show[j].end_time) {
                     timetable_end_time_text = ' - ' + timetables_to_show[j].end_time;
                 }
-                var top_offset = getPosition(min_hour, timetables_to_show[j].start_time);
-                var timetable_height = getHeight(timetables_to_show[j].start_time, timetables_to_show[j].end_time);
+                var top_offset = getPosition(min_hour, timetables_to_show[j].axis_start_time);
+                var timetable_height = getHeight(timetables_to_show[j].axis_start_time, timetables_to_show[j].axis_end_time);
                 var width_css = (checkMulti(timetables_to_show[j], timetables_to_show) > 1) ? 'width:' + (100 / checkMulti(timetables_to_show[j], timetables_to_show)) + '%;' : '';
                 var left_offset_css = (checkOrder(timetables_to_show[j], timetables_to_show) > 0) ? 'left:' + (checkOrder(timetables_to_show[j], timetables_to_show) * (100 / checkMulti(timetables_to_show[j], timetables_to_show))) + '%' : '';
                 timetable_html += '<div class="timetable-item">' + '<a class="timetable-title color-' + timetables_to_show[j].event_type + '" style="top:' + top_offset + 'px; height:' + timetable_height + 'px; ' + width_css + left_offset_css + '" href="#timetable-popup-' + timetables_to_show[j].id + '" class="open-popup-link">' + '<div class="timetable-title-wrap">' + '<div class="timetable-name">' + timetables_to_show[j].title + '</div>' + '<div class="timetable-time">' + timetables_to_show[j].start_time + ' - ' + timetables_to_show[j].end_time + '</div>' + '</div>' + '</a>' + '<div id="timetable-popup-' + timetables_to_show[j].id + '" class="timetable-popup zoom-anim-dialog mfp-hide">' + '<div class="popup-header color-' + timetables_to_show[j].event_type + '">' + timetables_to_show[j].title + '</div>' + '<div class="popup-body">' + timetable_img_html + '<div class="timetable-time color-' + timetables_to_show[j].event_type + '">' + timetables_to_show[j].start_time + timetable_end_time_text + '</div>' + '<div class="timetable-desc">' + timetables_to_show[j].description + '</div>' + '</div>' + '</div>' + '</div>';
@@ -350,7 +370,7 @@ function timetableList(timetable_elem, tiva_timetables, first_date_of_week) {
             timetable_html += '<div class="timetable-header">' + word_day_array[i] + timetable_header_time_html + '</div>';
             timetable_html += '<div class="timetable-content">';
             for (var j = 0; j < timetables_to_show.length; j++) {
-                if (timetables_to_show[j].start_time && timetables_to_show[j].end_time) {
+                if (timetables_to_show[j].axis_start_time && timetables_to_show[j].end_time) {
                     var image_html = timetables_to_show[j].image_url ? '<div class="timetable-image"><img src="' + timetables_to_show[j].image_url + '" alt="' + timetables_to_show[j].title + '" /></div>' : '';
                     var end_time_html = timetables_to_show[j].end_time ? ' - ' + timetables_to_show[j].end_time : '';
                     timetable_html += '<div class="timetable-item">' + '<span class="timetable-color color-' + timetables_to_show[j].event_type + '"></span>' + '<a class="timetable-title" href="#timetable-popup-' + timetables_to_show[j].id + '" class="open-popup-link">' + '<span class="timetable-time">' + timetables_to_show[j].start_time + end_time_html + '</span>' + '<span class="timetable-name">' + timetables_to_show[j].title + '</span>' + '</a>' + '<div id="timetable-popup-' + timetables_to_show[j].id + '" class="timetable-popup zoom-anim-dialog mfp-hide">' + '<div class="popup-header color-' + timetables_to_show[j].event_type + '">' + timetables_to_show[j].title + '</div>' + '<div class="popup-body">' + image_html + '<div class="timetable-time color-' + timetables_to_show[j].event_type + '">' + timetables_to_show[j].start_time + end_time_html + '</div>' + '<div class="timetable-desc">' + timetables_to_show[j].description + '</div>' + '</div>' + '</div>' + '</div>';
@@ -472,6 +492,9 @@ function load_timetables(url) {
                     first_date_of_week = new Date(now.setDate(tiva_current_date.getDate() - current_day_of_week + 1));
                 }
                 createTimetable(timetable_elem, 'current', first_date_of_week, tiva_current_month, tiva_current_year)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                timetable_elem.html("<p>" + errorThrown + "</p>");
             }
         })
     })
