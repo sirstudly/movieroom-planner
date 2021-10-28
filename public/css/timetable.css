@@ -766,10 +766,6 @@
     padding-top: 22.5pt;
 }
 
-[class~=timetable-popup] [class~=popup-header][class~=color-3] {
-    color: #666;
-}
-
 [class~=timetable-popup] [class~=popup-body], [class~=tiva-timetable] [class~=timetable-list] [class~=timetable-item] [class~=timetable-name], .tiva-timetable .timetable-list .timetable-item .timetable-time {
     color: #535353;
 }
@@ -936,10 +932,6 @@
 
 [class~=timetable-popup] [class~=popup-body] [class~=timetable-time] {
     margin-bottom: .15625in;
-}
-
-[class~=tiva-timetable] [class~=timetable-list] [class~=timetable-item] [class~=timetable-color][class~=color-3], [class~=tiva-timetable] [class~=timetable-week] [class~=timetable-column] [class~=timetable-title][class~=color-3], [class~=tiva-timetable] [class~=timetable-month] [class~=timetable-item] [class~=timetable-color][class~=color-3] {
-    color: #666;
 }
 
 [class~=my-mfp-zoom-in] [class~=zoom-anim-dialog] {
@@ -1192,6 +1184,22 @@
 
 .tiva-timetable table.timetable-month td.calendar-day {
     height: 3.75pc;
+}
+
+[class~=timetable-popup] [class~=popup-header][class~=color-public] {
+    background: #e78b6c;
+}
+
+[class~=tiva-timetable] [class~=timetable-month] [class~=timetable-item] [class~=timetable-color][class~=color-public], [class~=tiva-timetable] [class~=timetable-list] [class~=timetable-item] [class~=timetable-color][class~=color-public], [class~=tiva-timetable] [class~=timetable-week] [class~=timetable-column] [class~=timetable-title][class~=color-public] {
+    background: #e78b6c;
+}
+
+.timetable-popup .popup-header.color-private {
+    background: #69c;
+}
+
+[class~=tiva-timetable] [class~=timetable-month] [class~=timetable-item] [class~=timetable-color][class~=color-private], [class~=tiva-timetable] [class~=timetable-week] [class~=timetable-column] [class~=timetable-title][class~=color-private], [class~=tiva-timetable] [class~=timetable-list] [class~=timetable-item] [class~=timetable-color][class~=color-private] {
+    background: #69c;
 }
 
 @media (max-width: 768px) {

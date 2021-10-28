@@ -15,8 +15,11 @@ class CreateTimetableEventsTable extends Migration
     {
         Schema::create('timetable_events', function (Blueprint $table) {
             $table->increments('id');
+            $table->collation = 'utf8_general_ci';
+            $table->charset = 'utf8';
             $table->string('title');
-            $table->string('image_url');
+            $table->string('image_url')->nullable();
+            $table->string('owner');
             $table->text('description');
             $table->date('start_date');
             $table->time('start_time');

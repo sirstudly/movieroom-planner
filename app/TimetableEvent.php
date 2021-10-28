@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TimetableEvent extends Model
 {
-    protected $fillable = ['title', 'image_url', 'description', 'start_date', 'start_time', 'event_type', 'duration_minutes'];
+    protected $fillable = ['title', 'image_url', 'description', 'owner', 'start_date', 'start_time', 'event_type', 'duration_minutes'];
 
     public function getStartTimeAttribute($value)
     {

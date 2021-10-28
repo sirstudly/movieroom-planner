@@ -19,3 +19,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('events', 'TimetableEventController@index');
+
+Route::post('save_event', 'TimetableEventController@save_event');

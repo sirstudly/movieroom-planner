@@ -11,8 +11,14 @@
 |
 */
 
-Route::get('/', function () {
-    return view('calendar');
+Route::group(['middleware' => ['web']], function () {
+    Route::get('/', function () {
+        return view('calendar');
+    });
+});
+
+Route::get('/demo', function () {
+    return view('demo');
 });
 
 Route::get('/welcome', function () {

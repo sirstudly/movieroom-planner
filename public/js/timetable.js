@@ -451,7 +451,6 @@ function timetableMonth(timetable_elem, tiva_timetables, start_month_day, last_d
 
 function load_timetables(url) {
     jQuery('.tiva-timetable').each(function (idx) {
-    // jQuery('#tt-month').each(function (idx) {
         jQuery(this).attr('id', 'timetable-' + (idx + 1));
 
         // data_mode can be 'day' where we only show the current week; the response from the server
@@ -464,7 +463,7 @@ function load_timetables(url) {
         jQuery.ajax({
             url: url,
             dataType: 'json',
-            data: JSON.stringify({mode: data_mode}),
+            data: {mode: data_mode},
             beforeSend: function () {
                 timetable_elem.html('<div class="loading"><img src="images/loading.gif" /></div>')
             },
@@ -497,5 +496,67 @@ function load_timetables(url) {
                 timetable_elem.html("<p>" + errorThrown + "</p>");
             }
         })
+    });
+    jQuery('#timetable_add_entry_button').magnificPopup({
+        type: 'inline',
+        removalDelay: 800,
+        mainClass: 'my-mfp-zoom-in'
+    })
+}
+
+function init_schedule() {
+    'use strict';
+    window.addEventListener('load', function() {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+}
+
+function save_event(url) {
+    // If the form is invalid, submit it. The form won't actually submit;
+    // this will just cause the browser to display the native HTML5 error messages.
+    if (!document.forms[0].checkValidity()) {
+        jQuery('#hidden_submit').click();
+        return;
+    }
+
+    jQuery.ajax({
+        url: url,
+        dataType: 'json',
+        method: 'POST',
+        data: {
+            title: jQuery("input[name='title']").val(),
+            author: jQuery("input[name='author']").val(),
+            description: jQuery("textarea[name='description']").val(),
+            start_date: jQuery("input[name='event_date']").val(),
+            start_time: jQuery("input[name='event_time']").val(),
+            duration: jQuery("input[name='duration']").val(),
+            event_type: jQuery("input[name='event_type']:checked").val()
+        },
+        beforeSend: function () {
+            jQuery("button[type='submit']").attr("disabled", "disabled");
+        },
+        success: function (resp) {
+            jQuery("#ajax_response").html("<p>" + resp.message + "</p>");
+            if(resp.success) {
+                jQuery("#timetable-add-entry").find(".mfp-close").click();
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            jQuery("#ajax_response").html("<p>" + errorThrown + "</p>");
+        },
+        complete: function () {
+            jQuery("button[type='submit']").removeAttr("disabled");
+        }
     })
 }
